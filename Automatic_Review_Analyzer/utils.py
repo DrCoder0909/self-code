@@ -47,7 +47,7 @@ def load_data(path_data, extras= False):
         f_data = open(path_data)
 
     for datum in csv.DictReader(f_data, delimiter ="\t"):
-        for filed in list(datum.keys()):
+        for field in list(datum.keys()):
             if not extras and field not in basic_fields:
                 del datum[field]
             elif field in numeric_fields and datum[field]:

@@ -17,7 +17,7 @@ def get_order(n_samples):
         return indices
 
 
-def hinge_loss_single(feature vector, label, theta, theta_0):
+def hinge_loss_single(feature_vector, label, theta, theta_0):
     """Finds the hinge loss on a single data point given specific classification
     parameters.
 
@@ -32,13 +32,13 @@ def hinge_loss_single(feature vector, label, theta, theta_0):
         """
 
         #my code
-        z = label*(theta@feature vector+ theta_0)
-        if zlabel >1:
-            hinge_loss =0;
-        else:
-            hinge loss = 1- classify
+    z = label*(theta@feature_vector+ theta_0)
+    if z >1:
+        hinge_loss =0;
+    else:
+        hinge_loss = 1- z
 
-        return hinge_loss
+    return hinge_loss
 
 def hinge_loss_full(feature_matrix, labels, theta, theta_0):
     """
@@ -124,11 +124,12 @@ def perceptron(feature_matrix, labels, T):
         the offset parameter `theta_0` as a floating point number.
             (found also after T iterations throgh the feature matrix)
     """
+    samples = 200
     theta = np.zeros(len(feature_matrix[0]))
     theta_0 = 0
     for j in range(T):
         for i in get_order(samples):
-            loss = hinge_loss_single(feature_matrix[i], label[i],theta, theta_0)
+            loss = hinge_loss_single(feature_matrix[i], labels[i],theta, theta_0)
             if loss>=1:
                 continue
             if loss<1:
@@ -157,11 +158,12 @@ def average_perceptron(feature_matrix, labels, T):
     theta = np.zeros(len(feature_matrix[0]))
     theta_0 = 0
     sum_of_loss = 0
+    samples =200
 
     for j in range(T):
         for i in get_order(samples):
-            loss = hinge_loss_single(feature_matrix[i],labels[i])
-            sum_of_loss += loss
+            loss = hinge_loss_single(feature_matrix[i],labels[i], theta, theta_0)
+            theta, theta_0 = perceptron_single_step_update(feature_matrix[i], labels[i], theta, theta_0)
 
     average_loss = sum_of_loss/(len(get_order(samples))*T)
 
@@ -316,6 +318,7 @@ def classifier_accuracy(
     theta, theta_0 = classifier(train_feature_matrix, train_labels, **kwargs)
     error_train = 0
     count_train = 0
+    nsamples =200
     for i in get_order(nsamples):
         count_train+=1
         if theta@train_feature_matrix[i]+ theta_0 != train_labels[i]:
